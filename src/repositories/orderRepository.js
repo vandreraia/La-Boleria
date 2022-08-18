@@ -41,7 +41,8 @@ export async function selectOrders(date) {
             'description', cakes.description,
             'image', cakes.image
         ) AS cake,
-        orders.id AS "orderId", orders."createdAt", orders.quantity, orders."totalPrice"
+        orders.id AS "orderId", orders."createdAt",
+        orders.quantity, orders."totalPrice", orders."isDelivered"
         FROM ORDERS
         JOIN clients ON clients.id = orders."clientId"
         JOIN cakes ON cakes.id = orders."cakeId"
@@ -62,7 +63,8 @@ export async function selectOrders(date) {
             'description', cakes.description,
             'image', cakes.image
         ) AS cake,
-        orders.id AS "orderId", orders."createdAt", orders.quantity, orders."totalPrice"
+        orders.id AS "orderId", orders."createdAt",
+        orders.quantity, orders."totalPrice", orders."isDelivered"
         FROM ORDERS
         JOIN clients ON clients.id = orders."clientId"
         JOIN cakes ON cakes.id = orders."cakeId"
@@ -90,6 +92,21 @@ export async function selectOrderById(id) {
         FROM ORDERS
         JOIN clients ON clients.id = orders."clientId"
         JOIN cakes ON cakes.id = orders."cakeId"
+        WHERE orders.id = $1
+    `, [id])
+}
+
+export async function findOrderById(id) {
+    return connection.query(`
+        SELECT * FROM orders
+        WHERE orders.id = $1
+    `, [id])
+}
+
+export async function patchOrderQuery(id) {
+    return connection.query(`
+        UPDATE orders
+        SET "isDelivered" = true 
         WHERE orders.id = $1
     `, [id])
 }
